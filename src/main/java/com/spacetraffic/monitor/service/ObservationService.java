@@ -34,20 +34,12 @@ public class ObservationService {
         return observationRepository.findByObjectId(objectId);
     }
 
-    public List<Observation> getObservationsByTimeRange(
-            Instant start,
-            Instant end
-    ) {
+    public List<Observation> getObservationsByTimeRange(Instant start, Instant end) {
         return observationRepository.findByObservedAtBetween(start, end);
     }
 
-    public List<Observation> getObservationsByObjectAndTimeRange(
-            String objectId,
-            Instant start,
-            Instant end
-    ) {
-        return observationRepository
-                .findByObjectIdAndObservedAtBetween(objectId, start, end);
+    public List<Observation> getObservationsByObjectAndTimeRange(String objectId, Instant start, Instant end) {
+        return observationRepository.findByObjectIdAndObservedAtBetween(objectId, start, end);
     }
 
     @Transactional
