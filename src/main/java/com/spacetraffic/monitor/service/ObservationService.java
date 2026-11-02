@@ -1,4 +1,3 @@
-
 package com.spacetraffic.monitor.service;
 
 import com.spacetraffic.monitor.entity.Observation;

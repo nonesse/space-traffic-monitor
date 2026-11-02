@@ -1,4 +1,3 @@
-
 package com.spacetraffic.monitor.entity;
 
 import jakarta.persistence.*;

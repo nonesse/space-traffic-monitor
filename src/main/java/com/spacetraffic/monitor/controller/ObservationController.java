@@ -1,4 +1,3 @@
-
 package com.spacetraffic.monitor.controller;
 
 import com.spacetraffic.monitor.dto.ObservationRequest;
