@@ -1,6 +1,7 @@
 package com.spacetraffic.monitor.service;
 
 import com.spacetraffic.monitor.entity.Observation;
+import com.spacetraffic.monitor.exception.ObservationNotFoundException;
 import com.spacetraffic.monitor.repository.ObservationRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +27,7 @@ public class ObservationService {
     public Observation getObservationById(UUID id) {
         return observationRepository.findById(id)
                 .orElseThrow(() ->
-                        new RuntimeException("Observation not found: " + id));
+                        new ObservationNotFoundException(id));
     }
 
     public List<Observation> getObservationsByObjectId(String objectId) {

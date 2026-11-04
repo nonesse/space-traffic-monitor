@@ -13,7 +13,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 import jakarta.validation.Valid;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,6 +28,7 @@ import java.util.UUID;
         name = "Observations",
         description = "API for managing space object observations"
 )
+@Validated
 public class ObservationController {
 
     private final ObservationService observationService;
@@ -44,7 +48,6 @@ public class ObservationController {
             @ApiResponse(responseCode = "400", description = "Invalid observation data")
     })
     public ObservationResponse createObservation(@Valid @RequestBody ObservationRequest request) {
-
         Observation observation = observationService.createObservation(
                 request.objectId(),
                 request.observedAt(),
@@ -93,7 +96,7 @@ public class ObservationController {
     @ApiResponse(responseCode = "200", description = "Observations successfully retrieved")
     public List<ObservationResponse> getObservationsByObjectId(
             @Parameter(description = "Identifier of the space object", example = "SAT-001")
-            @PathVariable String objectId) {
+            @PathVariable @NotBlank @Size(max = 50) String objectId) {
 
         return observationService.getObservationsByObjectId(objectId)
                 .stream()
