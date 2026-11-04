@@ -17,3 +17,8 @@ spring:
 
   flyway:
     enabled: true
+
+springdoc:
+  swagger-ui:
+    url: openapi/space-traffic-api.yaml
+    disable-swagger-default-url: true

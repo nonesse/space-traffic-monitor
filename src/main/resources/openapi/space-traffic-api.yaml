@@ -1,0 +1,331 @@
+
+openapi: 3.1.0
+
+info:
+  title: Space Traffic Monitor API
+  version: 1.0.0
+  description: |
+    REST API for managing space object observations.
+    The API allows clients to register observations and
+    retrieve them by identifier or space object.
+
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+
+tags:
+  - name: Observations
+    description: Operations for managing space object observations
+
+paths:
+  /api/observations:
+    post:
+      tags:
+        - Observations
+      summary: Create a new observation
+      description: Registers a new observation of a space object.
+      operationId: createObservation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ObservationRequest'
+      responses:
+        '201':
+          description: Observation successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObservationResponse'
+        '400':
+          description: Invalid request data
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+              examples:
+                validationError:
+                  summary: Validation failed
+                  value:
+                    type: about:blank
+                    title: Validation failed
+                    status: 400
+                    detail: The request contains invalid data
+                    instance: /api/observations
+                    errors:
+                      objectId: must not be blank
+        '500':
+          description: Internal server error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+              examples:
+                internalServerError:
+                  summary: Internal server error
+                  value:
+                    type: about:blank
+                    title: Internal server error
+                    status: 500
+                    detail: An unexpected error occurred
+                    instance: /api/observations
+
+    get:
+      tags:
+        - Observations
+      summary: Get all observations
+      description: Retrieves all registered observations.
+      operationId: getAllObservations
+      responses:
+        '200':
+          description: List of observations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ObservationResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+              examples:
+                internalServerError:
+                  summary: Internal server error
+                  value:
+                    type: about:blank
+                    title: Internal server error
+                    status: 500
+                    detail: An unexpected error occurred
+                    instance: /api/observations
+
+  /api/observations/{id}:
+    get:
+      tags:
+        - Observations
+      summary: Get observation by ID
+      description: Retrieves an observation using its UUID.
+      operationId: getObservationById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: UUID of the observation
+          schema:
+            type: string
+            format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+      responses:
+        '200':
+          description: Observation found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObservationResponse'
+        '400':
+          description: Invalid UUID format
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+              examples:
+                invalidUuid:
+                  summary: Invalid UUID format
+                  value:
+                    type: about:blank
+                    title: Bad Request
+                    status: 400
+                    detail: Invalid UUID format
+                    instance: /api/observations/invalid-uuid
+        '404':
+          description: Observation not found
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+              examples:
+                notFound:
+                  summary: Observation not found
+                  value:
+                    type: about:blank
+                    title: Observation not found
+                    status: 404
+                    detail: Observation not found with the specified ID
+                    instance: /api/observations/550e8400-e29b-41d4-a716-446655440000
+        '500':
+          description: Internal server error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+              examples:
+                internalServerError:
+                  summary: Internal server error
+                  value:
+                    type: about:blank
+                    title: Internal server error
+                    status: 500
+                    detail: An unexpected error occurred
+                    instance: /api/observations/550e8400-e29b-41d4-a716-446655440000
+
+  /api/observations/object/{objectId}:
+    get:
+      tags:
+        - Observations
+      summary: Get observations by object ID
+      description: Retrieves all observations associated with a space object.
+      operationId: getObservationsByObjectId
+      parameters:
+        - name: objectId
+          in: path
+          required: true
+          description: Identifier of the space object
+          schema:
+            type: string
+            maxLength: 50
+          example: SAT-001
+      responses:
+        '200':
+          description: List of observations for the specified object
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ObservationResponse'
+        '400':
+          description: Invalid object ID
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+              examples:
+                invalidObjectId:
+                  summary: Invalid object ID
+                  value:
+                    type: about:blank
+                    title: Validation failed
+                    status: 400
+                    detail: Object ID must not be blank and must not exceed 50 characters
+                    instance: /api/observations/object/%20
+                    errors:
+                      objectId: must not be blank
+        '500':
+          description: Internal server error
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetail'
+              examples:
+                internalServerError:
+                  summary: Internal server error
+                  value:
+                    type: about:blank
+                    title: Internal server error
+                    status: 500
+                    detail: An unexpected error occurred
+                    instance: /api/observations/object/SAT-001
+
+components:
+  schemas:
+    ObservationRequest:
+      type: object
+      required:
+        - objectId
+        - observedAt
+        - positionX
+        - positionY
+        - positionZ
+      properties:
+        objectId:
+          type: string
+          maxLength: 50
+          description: Identifier of the observed space object
+          example: SAT-001
+        observedAt:
+          type: string
+          format: date-time
+          description: Date and time of the observation
+          example: '2026-11-01T16:30:00Z'
+        positionX:
+          type: number
+          format: double
+          example: 6871.2
+        positionY:
+          type: number
+          format: double
+          example: 120.5
+        positionZ:
+          type: number
+          format: double
+          example: 320.8
+
+    ObservationResponse:
+      type: object
+      required:
+        - id
+        - objectId
+        - observedAt
+        - positionX
+        - positionY
+        - positionZ
+        - createdAt
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        objectId:
+          type: string
+          example: SAT-001
+        observedAt:
+          type: string
+          format: date-time
+          example: '2026-11-01T16:30:00Z'
+        positionX:
+          type: number
+          format: double
+          example: 6871.2
+        positionY:
+          type: number
+          format: double
+          example: 120.5
+        positionZ:
+          type: number
+          format: double
+          example: 320.8
+        createdAt:
+          type: string
+          format: date-time
+          example: '2026-11-01T16:31:00Z'
+
+    ProblemDetail:
+      type: object
+      description: Standard error response based on RFC 9457.
+      properties:
+        type:
+          type: string
+          format: uri-reference
+          example: about:blank
+        title:
+          type: string
+          example: Validation failed
+        status:
+          type: integer
+          example: 400
+        detail:
+          type: string
+          example: The request contains invalid data
+        instance:
+          type: string
+          format: uri-reference
+          example: /api/observations
+        errors:
+          type: object
+          additionalProperties:
+            type: string
+          example:
+            objectId: must not be blank
