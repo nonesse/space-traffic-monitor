@@ -2,8 +2,8 @@ package com.spacetraffic.monitor.service;
 
 import com.spacetraffic.monitor.entity.Observation;
 import com.spacetraffic.monitor.exception.ObservationNotFoundException;
-import com.spacetraffic.monitor.kafka.ObservationCreatedEvent;
-import com.spacetraffic.monitor.kafka.ObservationProducer;
+import com.spacetraffic.monitor.kafka.event.ObservationCreatedEvent;
+import com.spacetraffic.monitor.kafka.producer.ObservationProducer;
 import com.spacetraffic.monitor.repository.ObservationRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -68,6 +68,7 @@ public class ObservationService {
         Observation savedObservation = observationRepository.save(observation);
 
         ObservationCreatedEvent event = new ObservationCreatedEvent(
+                UUID.randomUUID(),
                 savedObservation.getId(),
                 savedObservation.getObjectId(),
                 savedObservation.getObservedAt()

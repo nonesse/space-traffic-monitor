@@ -1,8 +1,8 @@
 package com.spacetraffic.monitor.service;
 
 import com.spacetraffic.monitor.entity.Observation;
-import com.spacetraffic.monitor.kafka.ObservationCreatedEvent;
-import com.spacetraffic.monitor.kafka.ObservationProducer;
+import com.spacetraffic.monitor.kafka.event.ObservationCreatedEvent;
+import com.spacetraffic.monitor.kafka.producer.ObservationProducer;
 import com.spacetraffic.monitor.repository.ObservationRepository;
 
 import org.junit.jupiter.api.BeforeEach;

@@ -21,20 +21,28 @@ spring:
   kafka:
     bootstrap-servers: localhost:9092
 
+    listener:
+      auto-startup: true
+
     producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      acks: all
+      retries: 10
+      properties:
+        enable.idempotence: true
+        max.in.flight.requests.per.connection: 5
 
     consumer:
       group-id: space-traffic-group
       auto-offset-reset: earliest
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-      properties:
-        spring.json.trusted.packages: "com.spacetraffic.monitor"
-        spring.json.value.default.type: "com.spacetraffic.monitor.kafka.ObservationCreatedEvent"
 
 springdoc:
   swagger-ui:
     url: openapi/space-traffic-api.yaml
     disable-swagger-default-url: true
+
+logging:
+  level:
+    root: INFO
+    com.spacetraffic.monitor: DEBUG
+    org.springframework.kafka: DEBUG
+    org.apache.kafka.clients.consumer: INFO

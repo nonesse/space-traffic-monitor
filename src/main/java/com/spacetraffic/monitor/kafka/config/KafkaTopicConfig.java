@@ -1,5 +1,6 @@
-package com.spacetraffic.monitor.kafka;
+package com.spacetraffic.monitor.kafka.config;
 
+import com.spacetraffic.monitor.kafka.KafkaConstants;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
